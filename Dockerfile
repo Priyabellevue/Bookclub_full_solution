@@ -1,8 +1,11 @@
 #
+## Build stage#
+FROM maven:3.8.4-openjdk-17 AS build
+COPY . .
+RUN mvn clean package -DskipTests
 #
-#
-FROM eclipse-temurin:17-jdk-jammy
-VOLUME /tmp
-COPY target/*.jar bookclub.jar
-ENTRYPOINT ["java", "-jar", "/bookclub.jar"]
+FROM openjdk:17-jdk-slim
+COPY --from=build /target/demo-0.0.1-SNAPSHOT.jar demo-0.0.1-SNAPSHOT.jar
+# ENV PORT=8080
 EXPOSE 8080
+ENTRYPOINT ["java","-jar","demo-0.0.1-SNAPSHOT.jar"]
